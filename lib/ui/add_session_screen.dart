@@ -1,7 +1,7 @@
 import 'package:bodygravity/common/common_divider.dart';
 import 'package:bodygravity/common/custom_text_field.dart';
 import 'package:bodygravity/common/custom_text_field_title.dart';
-import 'package:bodygravity/ui/customer_list_screen.dart';
+import 'package:bodygravity/ui/customer/customer_list_screen.dart';
 import 'package:bodygravity/ui/select_client_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

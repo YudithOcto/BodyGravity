@@ -1,22 +1,35 @@
+import 'package:bodygravity/common/constants.dart';
 import 'package:bodygravity/common/custom_text_field.dart';
 import 'package:bodygravity/common/custom_text_field_title.dart';
+import 'package:bodygravity/data/auth/model/auth/profile_response_dto.dart';
+import 'package:bodygravity/data/local/storage_service.dart';
+import 'package:bodygravity/di/di_container.dart';
+import 'package:bodygravity/ui/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../common/appcolors.dart';
 import '../common/customtextstyle.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final ProfileResponseDto? profileData;
+  const ProfileScreen({super.key, required this.profileData});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final TextEditingController _nameController =
-      TextEditingController(text: "Trainer A");
-  final TextEditingController _emailController =
-      TextEditingController(text: "Trainer@gmail.com");
+  late TextEditingController _nameController;
+  late TextEditingController _emailController;
+  late StorageService _storageService;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.profileData?.name);
+    _emailController = TextEditingController(text: widget.profileData?.email);
+    _storageService = locator<StorageService>();
+  }
 
   @override
   void dispose() {
@@ -53,7 +66,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     .copyWith(color: AppColors.blueGray800)),
             const Spacer(),
             InkWell(
-              onTap: () {},
+              onTap: () async {
+                await _storageService.deleteData(Constants.bearerToken);
+                if (mounted) {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (route) => false);
+                }
+              },
               child: const Icon(Icons.logout, color: AppColors.red600),
             )
           ],

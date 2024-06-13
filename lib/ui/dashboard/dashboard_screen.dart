@@ -1,15 +1,18 @@
 import 'package:bodygravity/common/appcolors.dart';
 import 'package:bodygravity/common/custom_filled_button.dart';
-import 'package:bodygravity/common/custom_text_field.dart';
 import 'package:bodygravity/common/customtextstyle.dart';
 import 'package:bodygravity/ui/add_session_screen.dart';
 import 'package:bodygravity/ui/add_transaction_screen.dart';
 import 'package:bodygravity/ui/customer_session_item_widget.dart';
+import 'package:bodygravity/ui/dashboard/bloc/dashboard_bloc.dart';
+import 'package:bodygravity/ui/dashboard/bloc/dashboard_event.dart';
+import 'package:bodygravity/ui/dashboard/bloc/dashboard_state.dart';
 import 'package:bodygravity/ui/filter_screen.dart';
 import 'package:bodygravity/ui/profile_screen.dart';
 import 'package:bodygravity/ui/transaction_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 
@@ -30,223 +33,263 @@ class _DashboardScreenState extends State<DashboardScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<DashboardBloc>(context).add(LoadDataEvent());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white900,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        surfaceTintColor: Colors.transparent,
-        backgroundColor: AppColors.white900,
-        centerTitle: false,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Selamat Datang,",
-                style: CustomTextStyle.body3
-                    .copyWith(color: AppColors.blueGray500)),
-            const SizedBox(height: 4.0),
-            Text("Setyo Budi Raharjo 👋🏻",
-                style: CustomTextStyle.caption1
-                    .copyWith(fontWeight: FontWeight.bold)
-                    .copyWith(color: AppColors.blueGray800)),
-          ],
-        ),
-        actions: [
-          InkWell(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const ProfileScreen()));
-            },
-            child: Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.only(right: 16.0),
-              child: const Image(
-                image: AssetImage("assets/images/ic_default_profile.png"),
-                width: 42.0,
-                height: 42.0,
+    return BlocConsumer<DashboardBloc, DashboardState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: AppColors.white900,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              surfaceTintColor: Colors.transparent,
+              backgroundColor: AppColors.white900,
+              centerTitle: false,
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Selamat Datang,",
+                      style: CustomTextStyle.body3
+                          .copyWith(color: AppColors.blueGray500)),
+                  const SizedBox(height: 4.0),
+                  if (state is LoadedState) ...[
+                    Text("${(state).profileData.name} 👋🏻",
+                        style: CustomTextStyle.caption1
+                            .copyWith(fontWeight: FontWeight.bold)
+                            .copyWith(color: AppColors.blueGray800)),
+                  ]
+                ],
               ),
-            ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 72.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const _MonthlyPerformanceWidget(),
-              const _QuickActionWidget(),
-              // const NextSessionWidget(),
-              // const CommonDivider(),
-              const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Text("Transaksi Terbaru", style: CustomTextStyle.headline4),
-                    const Spacer(),
-                    Visibility(
-                      visible: false,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  const TransactionListScreen()));
-                        },
-                        child: const Icon(
-                          Icons.search,
-                          color: AppColors.blackCustom,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8.0),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const FilterScreen()));
-                      },
-                      child: const Icon(
-                        Icons.filter_list_sharp,
-                        color: AppColors.blackCustom,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: InkWell(
+              actions: [
+                InkWell(
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const TransactionListScreen()));
+                    if (state is LoadedState) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              ProfileScreen(profileData: state.profileData)));
+                    } else {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              const ProfileScreen(profileData: null)));
+                    }
                   },
-                  child: Card(
-                    elevation: 3.0,
-                    child: Container(
-                      width: double.maxFinite,
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                          color: AppColors.white900,
-                          borderRadius: BorderRadius.circular(8.0)),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Cari Transaksi Klien",
-                            style: CustomTextStyle.body3,
-                          ),
-                          const Icon(
-                            Icons.search,
-                            color: AppColors.green600,
-                          )
-                        ],
-                      ),
+                  child: Container(
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.only(right: 16.0),
+                    child: const Image(
+                      image: AssetImage("assets/images/ic_default_profile.png"),
+                      width: 42.0,
+                      height: 42.0,
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16.0),
-              ListView.separated(
-                shrinkWrap: true,
-                separatorBuilder: (_, __) => const SizedBox(
-                  height: 16.0,
-                ),
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  final item = data[index];
-                  return InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          isDismissible: true,
-                          showDragHandle: true,
-                          backgroundColor: Colors.white,
-                          enableDrag: true,
-                          builder: (context) {
-                            return const TransactionDetailBottomSheetWidget();
-                          });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(16.0),
-                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.blueGray200),
-                          borderRadius: BorderRadius.circular(16.0)),
-                      child: Row(
+              ],
+            ),
+            body: state is LoadingState
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(AppColors.yellow500),
+                      strokeWidth: 3.0,
+                    ),
+                  )
+                : SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 72.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(8.0),
-                            decoration: const BoxDecoration(
-                                color: AppColors.blackCustom,
-                                shape: BoxShape.circle),
-                            child: const Icon(
-                              Icons.shopping_bag,
-                              size: 16.0,
-                              color: AppColors.white900,
+                          const _MonthlyPerformanceWidget(),
+                          const _QuickActionWidget(),
+                          const SizedBox(height: 16.0),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Text("Transaksi Terbaru",
+                                    style: CustomTextStyle.headline4),
+                                const Spacer(),
+                                Visibility(
+                                  visible: false,
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const TransactionListScreen()));
+                                    },
+                                    child: const Icon(
+                                      Icons.search,
+                                      color: AppColors.blackCustom,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8.0),
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const FilterScreen()));
+                                  },
+                                  child: const Icon(
+                                    Icons.filter_list_sharp,
+                                    color: AppColors.blackCustom,
+                                  ),
+                                )
+                              ],
                             ),
                           ),
-                          const SizedBox(width: 16.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${item['sesi']} Sesi',
-                                style: CustomTextStyle.body3
-                                    .copyWith(color: AppColors.blackCustom),
+                          const SizedBox(height: 8.0),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const TransactionListScreen()));
+                              },
+                              child: Card(
+                                elevation: 3.0,
+                                child: Container(
+                                  width: double.maxFinite,
+                                  padding: const EdgeInsets.all(16.0),
+                                  decoration: BoxDecoration(
+                                      color: AppColors.white900,
+                                      borderRadius: BorderRadius.circular(8.0)),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Cari Transaksi Klien",
+                                        style: CustomTextStyle.body3,
+                                      ),
+                                      const Icon(
+                                        Icons.search,
+                                        color: AppColors.green600,
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
-                              const SizedBox(height: 8.0),
-                              Text(
-                                '${item['tanggal']}',
-                                style: CustomTextStyle.caption2
-                                    .copyWith(color: AppColors.blackCustom),
-                              )
-                            ],
+                            ),
                           ),
-                          const Spacer(),
-                          Text(
-                            "${data[index]['pendapatan']}",
-                            style: CustomTextStyle.body3
-                                .copyWith(color: AppColors.blackCustom),
+                          const SizedBox(height: 16.0),
+                          ListView.separated(
+                            shrinkWrap: true,
+                            separatorBuilder: (_, __) => const SizedBox(
+                              height: 16.0,
+                            ),
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              final item = data[index];
+                              return InkWell(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      isDismissible: true,
+                                      showDragHandle: true,
+                                      backgroundColor: Colors.white,
+                                      enableDrag: true,
+                                      builder: (context) {
+                                        return const TransactionDetailBottomSheetWidget();
+                                      });
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(16.0),
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 16.0),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: AppColors.blueGray200),
+                                      borderRadius:
+                                          BorderRadius.circular(16.0)),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: const BoxDecoration(
+                                            color: AppColors.blackCustom,
+                                            shape: BoxShape.circle),
+                                        child: const Icon(
+                                          Icons.shopping_bag,
+                                          size: 16.0,
+                                          color: AppColors.white900,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16.0),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${item['sesi']} Sesi',
+                                            style: CustomTextStyle.body3
+                                                .copyWith(
+                                                    color:
+                                                        AppColors.blackCustom),
+                                          ),
+                                          const SizedBox(height: 8.0),
+                                          Text(
+                                            '${item['tanggal']}',
+                                            style: CustomTextStyle.caption2
+                                                .copyWith(
+                                                    color:
+                                                        AppColors.blackCustom),
+                                          )
+                                        ],
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        "${data[index]['pendapatan']}",
+                                        style: CustomTextStyle.body3.copyWith(
+                                            color: AppColors.blackCustom),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          Visibility(
+                            visible: false,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 24.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.hourglass_empty,
+                                      color: AppColors.blueGray400),
+                                  const SizedBox(height: 8.0),
+                                  Text(
+                                    "Tidak ada transaksi terbaru",
+                                    style: CustomTextStyle.caption1
+                                        .copyWith(color: AppColors.blueGray400),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
                           )
                         ],
                       ),
                     ),
-                  );
-                },
-              ),
-
-              Visibility(
-                visible: false,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.hourglass_empty,
-                          color: AppColors.blueGray400),
-                      const SizedBox(height: 8.0),
-                      Text(
-                        "Tidak ada transaksi terbaru",
-                        style: CustomTextStyle.caption1
-                            .copyWith(color: AppColors.blueGray400),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
                   ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+          );
+        });
   }
 }
 

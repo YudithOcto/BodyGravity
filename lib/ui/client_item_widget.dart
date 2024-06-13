@@ -1,12 +1,12 @@
 import 'package:bodygravity/common/appcolors.dart';
-import 'package:bodygravity/ui/customer_detail_screen.dart';
+import 'package:bodygravity/data/customer/model/customer_response_dto.dart';
 import 'package:flutter/material.dart';
 import '../common/customtextstyle.dart';
 
 class ClientItemWidget extends StatelessWidget {
-  final int index;
+  final CustomerResponseDto customer;
 
-  const ClientItemWidget({super.key, required this.index});
+  const ClientItemWidget({super.key, required this.customer});
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +29,9 @@ class ClientItemWidget extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Klien $index", style: CustomTextStyle.headline5),
+              Text(customer.name, style: CustomTextStyle.headline5),
               const SizedBox(height: 4.0),
-              Text("aaa@gmail.com", style: CustomTextStyle.caption2)
+              Text(customer.email, style: CustomTextStyle.caption2)
             ],
           ),
         ],

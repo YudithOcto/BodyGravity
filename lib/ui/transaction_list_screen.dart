@@ -1,7 +1,7 @@
 import 'package:bodygravity/common/appcolors.dart';
 import 'package:bodygravity/common/custom_text_field.dart';
 import 'package:bodygravity/common/customtextstyle.dart';
-import 'package:bodygravity/ui/dashboard_screen.dart';
+import 'package:bodygravity/ui/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 
 class TransactionListScreen extends StatefulWidget {

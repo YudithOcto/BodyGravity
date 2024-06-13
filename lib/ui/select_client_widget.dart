@@ -1,6 +1,6 @@
 import 'package:bodygravity/common/appcolors.dart';
 import 'package:bodygravity/common/customtextstyle.dart';
-import 'package:bodygravity/ui/customer_list_screen.dart';
+import 'package:bodygravity/ui/customer/customer_list_screen.dart';
 import 'package:flutter/material.dart';
 
 class SelectClientWidget extends StatelessWidget {

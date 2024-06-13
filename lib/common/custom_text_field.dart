@@ -24,6 +24,7 @@ class CustomTextField extends StatelessWidget {
   final int? maxLength;
   final List<TextInputFormatter>? inputFormatters;
   final Color? borderColor;
+  final String? errorText;
 
   const CustomTextField({
     Key? key,
@@ -47,6 +48,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLength,
     this.inputFormatters,
     this.borderColor = AppColors.blueGray300,
+    this.errorText,
   }) : super(key: key);
 
   @override
@@ -95,6 +97,7 @@ class CustomTextField extends StatelessWidget {
           )),
           focusedBorder: border,
           border: border,
+          errorText: errorText
         ));
   }
 }
