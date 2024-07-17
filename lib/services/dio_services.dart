@@ -3,6 +3,8 @@ import 'package:bodygravity/common/extension.dart';
 import 'package:bodygravity/data/local/storage_service.dart';
 import 'package:bodygravity/data/auth/model/base_response_dto.dart';
 import 'package:bodygravity/data/network/network_services.dart';
+import 'package:bodygravity/main.dart';
+import 'package:bodygravity/ui/auth/login_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +16,9 @@ class DioService implements NetworkService {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         String? token = await storageService.getData(Constants.bearerToken);
+        debugPrint(token);
         if (token.isNotNullOrEmpty) {
+          options.headers["Accept"] = "application/json";
           options.headers["Authorization"] = "Bearer $token";
         }
 
@@ -25,10 +29,18 @@ class DioService implements NetworkService {
         return handler.next(response);
       },
       onError: (DioException error, handler) {
-        debugPrint("Dio Error: ${error.message}");
+        if (error.response?.statusCode == 401) {
+          _redirectToLogin();
+        }
         return handler.next(error);
       },
     ));
+  }
+
+  void _redirectToLogin() {
+    navigatorKey.currentState?.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+        (route) => false);
   }
 
   @override

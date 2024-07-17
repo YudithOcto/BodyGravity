@@ -216,19 +216,19 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                 ],
               ),
               const SizedBox(height: 16.0),
-              ListView.builder(
-                itemCount: Random().nextInt(10),
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return CustomerSessionItemWidget(
-                    width: double.maxFinite,
-                    day: DateFormat('dd').format(_selectedDate),
-                    month: DateFormat('MMM').format(_selectedDate),
-                  );
-                },
-              ),
+              // ListView.builder(
+              //   itemCount: Random().nextInt(10),
+              //   scrollDirection: Axis.vertical,
+              //   shrinkWrap: true,
+              //   physics: const NeverScrollableScrollPhysics(),
+              //   itemBuilder: (context, index) {
+              //     return CustomerSessionItemWidget(
+              //       width: double.maxFinite,
+              //       day: DateFormat('dd').format(_selectedDate),
+              //       month: DateFormat('MMM').format(_selectedDate),
+              //     );
+              //   },
+              // ),
             ],
           ),
         ),

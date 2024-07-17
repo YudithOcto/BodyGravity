@@ -1,6 +1,5 @@
-import 'dart:async';
-
 import 'package:bodygravity/common/appcolors.dart';
+import 'package:bodygravity/common/countdown_timer.dart';
 import 'package:bodygravity/common/custom_filled_button.dart';
 import 'package:bodygravity/common/customtextstyle.dart';
 import 'package:bodygravity/ui/auth/bloc/login_bloc.dart';
@@ -23,13 +22,11 @@ class OtpBottomSheetWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(listener: (context, state) {
       if (state is LoginSuccess) {
-        Future.delayed(const Duration(milliseconds: 1500), () {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.message)));
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const DashboardScreen()),
-              (Route<dynamic> route) => false);
-        });
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(state.message)));
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const DashboardScreen()),
+            (Route<dynamic> route) => false);
       } else if (state is LoginFailure) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(state.error)));
@@ -45,7 +42,7 @@ class OtpBottomSheetWidget extends StatelessWidget {
             RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
-                text: 'Kami telah mengirimkan otp ke email ',
+                text: 'Kami telah mengirimkan otp ke email ${isSelf ? "" : "Klien Anda"}',
                 style: CustomTextStyle.body3.copyWith(color: Colors.black),
                 children: <TextSpan>[
                   TextSpan(
@@ -56,7 +53,7 @@ class OtpBottomSheetWidget extends StatelessWidget {
                   TextSpan(
                       text: isSelf
                           ? "Silahkan untuk mengecek email diatas."
-                          : "Silahkan untuk meminta pada klien",
+                          : "Silahkan untuk meminta OTP pada klien",
                       style:
                           CustomTextStyle.body3.copyWith(color: Colors.black))
                 ],
@@ -125,68 +122,5 @@ class OtpBottomSheetWidget extends StatelessWidget {
         ),
       );
     });
-  }
-}
-
-class CountdownTimer extends StatefulWidget {
-  final int seconds;
-  final VoidCallback onTimerEnd;
-  final bool restart;
-
-  const CountdownTimer(
-      {super.key,
-      required this.seconds,
-      required this.onTimerEnd,
-      required this.restart});
-
-  @override
-  createState() => _CountdownTimerState();
-}
-
-class _CountdownTimerState extends State<CountdownTimer> {
-  late int remainingSeconds;
-  late Timer timer;
-
-  @override
-  void didUpdateWidget(covariant CountdownTimer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.restart) {
-      timer.cancel();
-      startTimer();
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    startTimer();
-  }
-
-  void startTimer() {
-    remainingSeconds = widget.seconds;
-    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      if (remainingSeconds == 0) {
-        widget.onTimerEnd();
-        timer.cancel();
-      } else {
-        setState(() {
-          remainingSeconds--;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    timer.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'Resend OTP in $remainingSeconds seconds',
-      style: const TextStyle(fontSize: 16),
-    );
   }
 }

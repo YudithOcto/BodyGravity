@@ -3,29 +3,54 @@ import 'package:table_calendar/table_calendar.dart';
 import '../common/appcolors.dart';
 import '../common/customtextstyle.dart';
 
+typedef StartDate = DateTime;
+typedef EndDate = DateTime;
+
 class CalendarWidget extends StatefulWidget {
   final List<dynamic> Function(DateTime)? events;
-  const CalendarWidget({super.key, this.events});
+  final Function(DateTime)? onSingleSelectedDate;
+  final Function(StartDate, EndDate)? onRangeSelectedDate;
+  final RangeSelectionMode rangeSelectionMode;
+  final DateTime? firstDay;
+  final DateTime? lastDay;
+  const CalendarWidget({
+    super.key,
+    this.events,
+    required this.rangeSelectionMode,
+    this.onSingleSelectedDate,
+    this.onRangeSelectedDate,
+    this.firstDay,
+    this.lastDay,
+  });
 
   @override
   State<CalendarWidget> createState() => _CalendarWidgetState();
 }
 
 class _CalendarWidgetState extends State<CalendarWidget> {
-  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
-      .toggledOn; // Can be toggled on/off by longpressing a date
+  late RangeSelectionMode _rangeSelectionMode;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
+  late DateTime firstDay;
+  late DateTime lastDay;
+
+  @override
+  void initState() {
+    super.initState();
+    _rangeSelectionMode = widget.rangeSelectionMode;
+    firstDay = widget.firstDay ?? DateTime.now().subtract(const Duration(days: 30));
+    lastDay = widget.lastDay ?? DateTime.now().add(const Duration(days: 90));
+  }
 
   @override
   Widget build(BuildContext context) {
     final defaultTextStyle =
         CustomTextStyle.headline5.copyWith(color: AppColors.blueGray900);
     return TableCalendar(
-      firstDay: DateTime.now().subtract(const Duration(days: 30)),
-      lastDay: DateTime.now().add(const Duration(days: 90)),
+      firstDay: firstDay,
+      lastDay: lastDay,
       focusedDay: _focusedDay,
       selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
       rangeStartDay: _rangeStart,
@@ -83,6 +108,9 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             _rangeStart = null; // Important to clean those
             _rangeEnd = null;
             _rangeSelectionMode = RangeSelectionMode.toggledOff;
+            if (widget.onSingleSelectedDate != null) {
+              widget.onSingleSelectedDate!(selectedDay);
+            }
           });
         }
       },
@@ -93,6 +121,11 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           _rangeStart = start;
           _rangeEnd = end;
           _rangeSelectionMode = RangeSelectionMode.toggledOn;
+          if (widget.onRangeSelectedDate != null &&
+              start != null &&
+              end != null) {
+            widget.onRangeSelectedDate!(start, end);
+          }
         });
       },
       onPageChanged: (focusedDay) {

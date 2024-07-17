@@ -1,3 +1,5 @@
+import 'package:bodygravity/common/datetime_util.dart';
+import 'package:bodygravity/data/transactions/model/workout_response_dto.dart';
 import 'package:bodygravity/ui/session_detail_screen_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 
@@ -6,25 +8,24 @@ import '../common/customtextstyle.dart';
 
 class CustomerSessionItemWidget extends StatelessWidget {
   final VoidCallback? onSessionStart;
-  final VoidCallback? onReschedule;
+  final Function(String)? onCancel;
   final double? width;
-  final String day;
-  final String month;
+  final WorkoutResponseDto workout;
   final bool needToShowSplit;
   final bool isTransferred;
 
   const CustomerSessionItemWidget(
       {super.key,
-      this.onReschedule,
+      this.onCancel,
       this.onSessionStart,
       this.width,
-      required this.day,
-      required this.month,
+      required this.workout,
       this.needToShowSplit = true,
       this.isTransferred = false});
 
   @override
   Widget build(BuildContext context) {
+    final date = DateTime.parse(workout.scheduledAt);
     return InkWell(
       onTap: () {
         showModalBottomSheet(
@@ -67,39 +68,42 @@ class CustomerSessionItemWidget extends StatelessWidget {
                               )),
                           child: Column(
                             children: [
-                              Text(day,
+                              Text(date.day.toString(),
                                   style: CustomTextStyle.body2
                                       .copyWith(fontWeight: FontWeight.bold)),
-                              Text(month, style: CustomTextStyle.caption1),
+                              Text(DateTimeUtil.getMonthName(date),
+                                  style: CustomTextStyle.caption1),
                             ],
                           ),
                         ),
                       ),
                       const SizedBox(width: 12.0),
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           RowSessionItemDetail(
                             icon: Icons.star_rounded,
-                            title: "Keluhan: Pinggang Sakit",
+                            title: "Keluhan: ${workout.concern}",
                             isNeedBlue: true,
                           ),
-                          SizedBox(height: 8.0),
+                          const SizedBox(height: 8.0),
                           RowSessionItemDetail(
-                              icon: Icons.timer, title: "07:30 - 09:00 PM"),
-                          SizedBox(height: 8.0),
+                              icon: Icons.timer,
+                              title:
+                                  "Jam: ${DateTimeUtil.extractTimeWithoutSeconds(date)}"),
+                          const SizedBox(height: 8.0),
                           RowSessionItemDetail(
                               icon: Icons.wifi_protected_setup_sharp,
-                              title: "Status: Selesai")
+                              title: "Status: ${workout.status}")
                         ],
                       ),
                     ],
                   ),
                 ),
                 Visibility(
-                  visible: onReschedule != null || onSessionStart != null,
+                  visible: onCancel != null || onSessionStart != null,
                   child: const Divider(
                     thickness: 1,
                     color: AppColors.blueGray100,
@@ -107,18 +111,37 @@ class CustomerSessionItemWidget extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
-                  child: InkWell(
-                    onTap: () {
-                      if (onSessionStart != null) {
-                        onSessionStart!();
-                      }
-                    },
-                    child: Text(
-                      "Mulai Sesi",
-                      style: CustomTextStyle.body3.copyWith(
-                          color: AppColors.primary900,
-                          fontWeight: FontWeight.bold),
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          if (onSessionStart != null) {
+                            onSessionStart!();
+                          }
+                        },
+                        child: Text(
+                          "Selesaikan Sesi",
+                          style: CustomTextStyle.body3.copyWith(
+                              color: AppColors.green600,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(width: 20.0),
+                      InkWell(
+                        onTap: () {
+                          if (onCancel != null) {
+                            onCancel!(workout.id);
+                          }
+                        },
+                        child: Text(
+                          "Batalkan",
+                          style: CustomTextStyle.body3.copyWith(
+                              color: AppColors.red500,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 8.0)
@@ -168,13 +191,13 @@ class RowSessionItemDetail extends StatelessWidget {
         Icon(
           icon,
           size: 20.0,
-          color: isNeedBlue ? AppColors.primary900 : Colors.black,
+          color: isNeedBlue ? AppColors.green600 : Colors.black,
         ),
         const SizedBox(width: 4.0),
         Text(
           title,
-          style: CustomTextStyle.body3.copyWith(
-              color: isNeedBlue ? AppColors.primary900 : Colors.black),
+          style: CustomTextStyle.body3
+              .copyWith(color: isNeedBlue ? AppColors.green600 : Colors.black),
         )
       ],
     );

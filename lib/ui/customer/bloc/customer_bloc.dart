@@ -30,5 +30,13 @@ class CustomerBloc extends Bloc<CustomerEvent, CustomerState> {
             result.message ?? "telah terjadi kesalahan. Silahkan coba lagi"));
       }
     });
+
+    on<CustomerInitialLoadEvent>((event, emit) {
+      emit(InitialLoadState());
+    });
+
+    on<ClearDataEvent>((event, emit) {
+      emit(const LoadSuccessState([]));
+    });
   }
 }

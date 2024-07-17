@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:bodygravity/common/custom_filled_button.dart';
-import 'package:bodygravity/ui/add_session_screen.dart';
+import 'package:bodygravity/ui/transactions/add_session/add_session_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -118,22 +118,22 @@ class _TrainerScheduleScreenState extends State<TrainerScheduleScreen> {
                 ),
               ),
               const SizedBox(height: 16.0),
-              ListView.builder(
-                itemCount: Random().nextInt(10),
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return CustomerSessionItemWidget(
-                    width: double.maxFinite,
-                    day: DateFormat('dd').format(_selectedDate),
-                    month: DateFormat('MMM').format(_selectedDate),
-                
-                    needToShowSplit: index == 0,
-                    isTransferred: index == 1,
-                  );
-                },
-              ),
+              // ListView.builder(
+              //   itemCount: Random().nextInt(10),
+              //   scrollDirection: Axis.vertical,
+              //   shrinkWrap: true,
+              //   physics: const NeverScrollableScrollPhysics(),
+              //   itemBuilder: (context, index) {
+              //     return CustomerSessionItemWidget(
+              //       width: double.maxFinite,
+              //       day: DateFormat('dd').format(_selectedDate),
+              //       month: DateFormat('MMM').format(_selectedDate),
+
+              //       needToShowSplit: index == 0,
+              //       isTransferred: index == 1,
+              //     );
+              //   },
+              // ),
               const SizedBox(height: 16.0),
             ],
           ),

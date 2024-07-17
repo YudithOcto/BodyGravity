@@ -114,7 +114,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                               final customer = state.customers[index];
                               return InkWell(
                                   onTap: () {
-                                    Navigator.of(context).pop(true);
+                                    Navigator.of(context).pop(customer);
                                   },
                                   child: ClientItemWidget(customer: customer));
                             },

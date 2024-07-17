@@ -3,7 +3,10 @@ import 'package:equatable/equatable.dart';
 abstract class CustomerEvent extends Equatable {
   const CustomerEvent();
 }
-
+class CustomerInitialLoadEvent extends CustomerEvent {
+  @override
+  List<Object?> get props => [];
+}
 class LoadDataEvent extends CustomerEvent {
   final String? query;
   final int? page;
@@ -23,4 +26,9 @@ class AddCustomerEvent extends CustomerEvent {
 
   @override
   List<Object?> get props => [phoneNumber, name, email];
+}
+
+class ClearDataEvent extends CustomerEvent {
+  @override
+  List<Object?> get props => [];
 }

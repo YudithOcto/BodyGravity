@@ -5,7 +5,7 @@ import 'package:bodygravity/common/customtextstyle.dart';
 import 'package:bodygravity/ui/auth/bloc/login_bloc.dart';
 import 'package:bodygravity/ui/auth/bloc/login_event.dart';
 import 'package:bodygravity/ui/auth/bloc/login_state.dart';
-import 'package:bodygravity/ui/bottom_sheet/otp_bottom_sheet_widget.dart';
+import 'package:bodygravity/ui/auth/otp_bottom_sheet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

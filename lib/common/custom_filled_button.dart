@@ -16,7 +16,7 @@ class CustomFilledButton extends StatelessWidget {
   final double? height;
 
   const CustomFilledButton(
-      {Key? key,
+      {super.key,
         required this.buttonText,
         required this.onPressed,
         this.color,
@@ -26,8 +26,7 @@ class CustomFilledButton extends StatelessWidget {
         this.isEnabled = true,
         this.intrinsicWidthEnabled = false,
         this.height,
-        this.radius = 8.0})
-      : super(key: key);
+        this.radius = 8.0});
 
   @override
   Widget build(BuildContext context) {

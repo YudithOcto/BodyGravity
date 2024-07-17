@@ -1,12 +1,18 @@
 import 'package:bodygravity/data/auth/auth_repository.dart';
 import 'package:bodygravity/data/customer/customer_repository.dart';
 import 'package:bodygravity/data/local/storage_service.dart';
+import 'package:bodygravity/data/transactions/transactions_repository.dart';
 import 'package:bodygravity/services/dio_services.dart';
 import 'package:bodygravity/data/network/network_services.dart';
 import 'package:bodygravity/services/hive_storage_services.dart';
 import 'package:bodygravity/ui/auth/bloc/login_bloc.dart';
+import 'package:bodygravity/ui/chart/bloc/chart_bloc.dart';
 import 'package:bodygravity/ui/customer/bloc/customer_bloc.dart';
 import 'package:bodygravity/ui/dashboard/bloc/dashboard_bloc.dart';
+import 'package:bodygravity/ui/transactions/add_session/bloc/add_session_bloc.dart';
+import 'package:bodygravity/ui/transactions/bloc/transaction_bloc.dart';
+import 'package:bodygravity/ui/transactions/end_session/bloc/end_session_bloc.dart';
+import 'package:bodygravity/ui/transactions/search/bloc/search_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -45,11 +51,23 @@ Future<void> setupLocator() async {
       locator<NetworkService>(), locator<StorageService>()));
   locator.registerSingleton<CustomerRepository>(
       DefaultCustomerRepository(locator<NetworkService>()));
+  locator.registerSingleton<TransactionsRepository>(
+      DefaultTransactionRepository(locator<NetworkService>()));
 
   // Register Bloc
   locator.registerSingleton<LoginBloc>(LoginBloc(locator<AuthRepository>()));
-  locator.registerSingleton<DashboardBloc>(
-      DashboardBloc(locator<AuthRepository>()));
+  locator.registerSingleton<DashboardBloc>(DashboardBloc(
+      locator<AuthRepository>(), locator<TransactionsRepository>()));
   locator.registerSingleton<CustomerBloc>(
       CustomerBloc(locator<CustomerRepository>()));
+  locator.registerSingleton<TransactionBloc>(
+      TransactionBloc(locator<TransactionsRepository>()));
+  locator.registerSingleton<SearchBloc>(
+      SearchBloc(locator<TransactionsRepository>()));
+  locator.registerSingleton<AddSessionBloc>(
+      AddSessionBloc(locator<TransactionsRepository>()));
+  locator.registerSingleton<EndSessionBloc>(
+      EndSessionBloc(locator<TransactionsRepository>()));
+  locator.registerSingleton<Chartbloc>(
+      Chartbloc(locator<TransactionsRepository>()));
 }

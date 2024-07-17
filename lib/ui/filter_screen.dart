@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
 import '../common/appcolors.dart';
 import '../common/custom_filled_button.dart';
 import '../common/customtextstyle.dart';
@@ -7,7 +8,8 @@ import 'calendar_widget.dart';
 final today = DateUtils.dateOnly(DateTime.now());
 
 class FilterScreen extends StatelessWidget {
-  const FilterScreen({super.key});
+  final Function(DateTime, DateTime) onFilterDate;
+  const FilterScreen({super.key, required this.onFilterDate});
 
   static const routeName = '/filter';
 
@@ -26,7 +28,14 @@ class FilterScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CalendarWidget(),
+              CalendarWidget(
+                firstDay: DateTime.now().subtract(const Duration(days: 150)),
+                lastDay: DateTime.now(),
+                rangeSelectionMode: RangeSelectionMode.toggledOn,
+                onRangeSelectedDate: (start, end) {
+                  onFilterDate(start, end);
+                },
+              ),
               const SizedBox(height: 8.0),
               CustomFilledButton(
                 height: 57.0,
